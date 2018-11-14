@@ -6,7 +6,7 @@ This project uses a [SparkFun Thing Dev] board to provide alarm status for an El
 
 The deivce itself is very simple, it's just a multi-color LED connected to pins 4, 12, and 13 on the ThingDev with the common lead connected to 3V via. a resistor. The value of the reisistor isn't important, although you may want to test multiple values until you find a brightness you like. With the LED I used, the resistor I neded up with provides the minimum current needed to light the LED as I found everything else to be too bright.
 
-![ThingDev with LED](https://banjo.employees.org/~drich/ElkM1_ThingDev_256x290.png)
+![ThingDev with LED](http://banjo.employees.org/~drich/ElkM1_ThingDev_256x290.png)
 
 ## Code changes
 
