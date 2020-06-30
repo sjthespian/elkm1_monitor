@@ -2,7 +2,7 @@
 
 This project uses a [SparkFun Thing Dev] board to provide alarm status for an ElkM1. In my case I use an [ISY994i] to communicate with my ElkM1, but it shoudl be stright forward to modify the code to talk directly to the Elk XEPM1.
 
-I have also started integrating this with ESPHome and Home Assistant, the myhome.yaml file is my initial attempt at that. For this implementation, the LED colors are controlled via. NodeRed, I will post those flows once they are up and running fully.
+I have also started integrating this with [ESPHome](https://esphome.io/) and [Home Assistant](https://www.home-assistant.io/), the myhome.yaml file is my initial attempt at that. For this implementation, the LED colors are controlled via. NodeRed, I will post those flows once they are up and running fully.
 
 ## The build
 
