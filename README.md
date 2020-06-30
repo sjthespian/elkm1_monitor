@@ -2,6 +2,8 @@
 
 This project uses a [SparkFun Thing Dev] board to provide alarm status for an ElkM1. In my case I use an [ISY994i] to communicate with my ElkM1, but it shoudl be stright forward to modify the code to talk directly to the Elk XEPM1.
 
+I have also started integrating this with ESPHome and Home Assistant, the myhome.yaml file is my initial attempt at that. For this implementation, the LED colors are controlled via. NodeRed, I will post those flows once they are up and running fully.
+
 ## The build
 
 The deivce itself is very simple, it's just a multi-color LED connected to pins 4, 12, and 13 on the ThingDev with the common lead connected to 3V via. a resistor. The value of the reisistor isn't important, although you may want to test multiple values until you find a brightness you like. With the LED I used, the resistor I neded up with provides the minimum current needed to light the LED as I found everything else to be too bright.
