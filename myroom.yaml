@@ -1,0 +1,168 @@
+esphome:
+  name: myroom_esp
+  platform: ESP8266
+  # NOTE: thingdev will not work for OTA updates - only 512MB of memory
+  board: esp01
+  on_boot:
+    priority: 700.0
+    then:
+      - light.turn_off:
+          id: main_led
+      - light.turn_on:
+          id: indicator_led
+          brightness: 50%
+          red: 0%
+          green: 0%
+          blue: 100%
+
+wifi:
+  ssid: "myWifi"
+  password: "password"
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "MyRoom ESP Fallback Hotspot"
+    password: "appassword"
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+# Indicite if wifi fails
+interval:
+  - interval: 15s
+    then:
+      if:
+        condition:
+          wifi.connected:
+        then:
+        else:
+          - light.turn_on:
+              id: indicator_led
+              brightness: 50%
+              red: 0%
+              green: 60%
+              blue: 80%
+              effect: "Tricolor Fade"
+
+binary_sensor:
+  - platform: status
+    name: "MyRoom ESP status"
+
+light:
+  # RGB configuration
+  - platform: rgb
+    id: indicator_led
+    name: "MyRoom ESP RGB LED"
+    red: output_red
+    green: output_green
+    blue: output_blue
+    effects:
+      - strobe:
+      - strobe:
+          name: Tricolor Strobe
+          colors:
+            - state: True
+              brightness: 40%
+              red: 80%
+              green: 80%
+              blue: 0%
+              duration: 500ms
+            - state: True
+              brightness: 40%
+              red: 0%
+              green: 80%
+              blue: 80%
+              duration: 500ms
+            - state: True
+              brightness: 40%
+              red: 80%
+              green: 0%
+              blue: 80%
+              duration: 500ms
+      - lambda:
+          name: Tricolor Fade
+          update_interval: 1000ms
+          lambda: |-
+            static int state = 0;
+            auto call = id(indicator_led).turn_on();
+            // Transtion of 1000ms = 1s
+            call.set_transition_length(1000);
+            if (state == 0) {
+              call.set_rgb(1.0, 0.8, 0.0);
+            } else if (state == 1) {
+              call.set_rgb(0.0, 0.8, 1.0);
+            } else {
+              call.set_rgb(1.0, 0.0, 1.0);
+            }
+            call.perform();
+            state += 1;
+            if (state == 3)
+              state = 0;
+      - lambda:
+          name: Pulse
+          update_interval: 2000ms
+          lambda: |-
+            static int state = 0;
+            auto call = id(indicator_led).turn_on();
+            call.set_transition_length(2000);
+            if (state == 0) {
+              call.set_brightness(0.2);
+            } else {
+              call.set_brightness(0.8);
+            }
+            call.perform();
+            state += 1;
+            if (state == 2)
+              state = 0;
+
+  # Power LED
+  - platform: monochromatic
+    output: main_led_output
+    name: "Main LED"
+    id: "main_led"
+
+output:
+  - platform: esp8266_pwm
+    inverted: true
+    id: output_red
+    pin: 12
+  - platform: esp8266_pwm
+    inverted: true
+    id: output_green
+    pin: 13
+  - platform: esp8266_pwm
+    inverted: true
+    id: output_blue
+    pin: 4
+  - platform: esp8266_pwm
+    inverted: true
+    pin: 5
+    id: main_led_output
+
+# MQTT for temp/humidity/pressure updates
+mqtt:
+  broker: 172.16.42.59
+  port: 1883
+  username: mqtt
+  password: mqttpswd
+
+# BME280 temperature sensor
+sensor:
+  - platform: dht
+    pin: GPIO2
+    model: AM2302
+    update_interval: 60s
+    temperature:
+      name: "MyRoom ESP Temperature"
+      filters:
+        - lambda: return x * (9.0/5.0) + 32.0;
+      unit_of_measurement: "°F"
+    humidity:
+      name: "MyRoom ESP Humidity"
